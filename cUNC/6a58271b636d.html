@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>cUNC 3.0.0 — Test Results</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+:root{--bg:#0f0f17;--surface:#171724;--surface2:#1e1e30;--border:#2a2a40;--text:#e2e8f0;--muted:#64748b;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--accent:#818cf8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::-webkit-scrollbar{width:6px}
+body::-webkit-scrollbar-track{background:var(--bg)}
+body::-webkit-scrollbar-thumb{background:#2a2a50;border-radius:3px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.logo{font-size:1.4rem;font-weight:700;background:linear-gradient(90deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tagline{font-size:.8rem;color:var(--muted);margin-top:2px}
+.header-links{display:flex;gap:1rem}
+.header-links a{color:var(--muted);font-size:1.1rem;transition:color .2s}
+.header-links a:hover{color:var(--text)}
+.layout{display:grid;grid-template-columns:1fr 300px;gap:1.5rem;padding:1.5rem;max-width:1400px;margin:0 auto}
+.main{min-width:0}
+.section-title{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.6rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.85rem 1rem;border-left:3px solid;transition:transform .15s,background .15s;cursor:default}
+.card:hover{background:var(--surface2);transform:translateY(-2px)}
+.card.passed{border-left-color:var(--green)}
+.card.failed{border-left-color:var(--red)}
+.card.warning{border-left-color:var(--yellow)}
+.card-top{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem}
+.card-icon{font-size:.85rem;width:18px;text-align:center}
+.card-name{font-weight:700;font-size:.9rem;font-family:'Fira Mono',monospace}
+.card-msg{font-size:.78rem;color:var(--muted);line-height:1.4}
+.sidebar{display:flex;flex-direction:column;gap:1rem}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.circle-wrap{position:relative;width:160px;height:160px;margin:0 auto 1rem}
+.circle-wrap svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
+.pct-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:700}
+.stat-row{display:flex;justify-content:center;align-items:baseline;gap:.4rem;margin-bottom:.5rem}
+.stat-big{font-size:2rem;font-weight:700;color:var(--accent)}
+.stat-total{font-size:1.2rem;color:var(--muted)}
+.stat-fail{text-align:center;font-size:.9rem;color:var(--red);font-weight:600;margin-bottom:1rem}
+.meta-item{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.meta-item:last-child{border-bottom:none}
+.meta-label{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted)}
+.meta-label i{width:14px;text-align:center}
+.meta-value{font-size:.85rem;font-weight:600;text-align:right;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.links{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+.link-btn{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);text-decoration:none;font-size:.85rem;transition:background .2s,border-color .2s}
+.link-btn:hover{background:var(--border);border-color:var(--accent)}
+.link-btn i{color:var(--accent);width:16px;text-align:center}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{order:-1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card{opacity:0;animation:fadeUp .3s ease forwards}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="logo">cUNC Test Results</div>
+    <div class="tagline">Made by cactus &mdash; v3.0.0</div>
+  </div>
+  <div class="header-links">
+    <a href="https://raming6.github.io/cUNC/" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+    <a href="https://raming6.github.io/cUNC/" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+  </div>
+</div>
+<div class="layout">
+  <div class="main">
+    <div class="section-title">Test Results</div>
+    <div class="grid" id="results"></div>
+  </div>
+  <div class="sidebar">
+    <div class="panel">
+      <div class="circle-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#1e1e30" stroke-width="10"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#818cf8" stroke-width="10" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="18" style="transition:stroke-dashoffset 1.2s ease"/>
+        </svg>
+        <div class="pct-text">94%</div>
+      </div>
+      <div class="stat-row">
+        <span class="stat-big">104</span>
+        <span class="stat-total">/ 110</span>
+      </div>
+      <div class="stat-fail">6 Failed</div>
+      <div class="meta-item"><span class="meta-label"><i class="fas fa-clock"></i>Duration</span><span class="meta-value">15.93s</span></div>
+      <div class="meta-item"><span class="meta-label"><i class="fas fa-bolt"></i>Executor</span><span class="meta-value">Potassium 2.3.1</span></div>
+      <div class="meta-item"><span class="meta-label"><i class="fas fa-user"></i>User</span><span class="meta-value">Wg4_0</span></div>
+      <div class="meta-item"><span class="meta-label"><i class="fas fa-id-badge"></i>User ID</span><span class="meta-value">11197239079</span></div>
+      <div class="meta-item"><span class="meta-label"><i class="fas fa-fingerprint"></i>Test ID</span><span class="meta-value">6a58271b636d</span></div>
+      <div class="meta-item"><span class="meta-label"><i class="fas fa-calendar"></i>Time</span><span class="meta-value">2026-07-15 19:34:35</span></div>
+    </div>
+    <div class="panel">
+      <div class="section-title">Links</div>
+      <div class="links">
+        <a class="link-btn" href="https://raming6.github.io/cUNC/" target="_blank"><i class="fab fa-github"></i>GitHub Repository</a>
+        <a class="link-btn" href="https://raming6.github.io/cUNC/" target="_blank"><i class="fab fa-discord"></i>Join Discord</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const tests = [{"status":"passed","name":"Drawing","message":"Drawing library is present (0.00s)"},{"status":"passed","name":"Drawing.Fonts","message":"Drawing.Fonts has all expected font IDs (0.00s)"},{"status":"passed","name":"Drawing.new","message":"Drawing.new created and removed 6 object types (0.00s)"},{"status":"passed","name":"WebSocket","message":"WebSocket library is present (0.00s)"},{"status":"passed","name":"appendfile","message":"appendfile correctly concatenates content (0.00s)"},{"status":"passed","name":"cache.invalidate","message":"cache.invalidate works correctly (0.00s)"},{"status":"passed","name":"cache.iscached","message":"cache.iscached correctly tracks cache state (0.00s)"},{"status":"passed","name":"cache.replace","message":"cache.replace executes without error (0.00s)"},{"status":"passed","name":"checkcaller","message":"checkcaller returns boolean: true (0.00s)"},{"status":"passed","name":"cleardrawcache","message":"cleardrawcache executed without error (0.00s)"},{"status":"passed","name":"clonefunction","message":"clonefunction produces valid independent clone (0.00s)"},{"status":"passed","name":"cloneref","message":"cloneref produces synchronized distinct references (0.00s)"},{"status":"passed","name":"compareinstances","message":"compareinstances correctly distinguishes instance identity (0.00s)"},{"status":"passed","name":"crypt.base64decode","message":"crypt.base64decode verified (0.00s)"},{"status":"passed","name":"crypt.base64encode","message":"crypt.base64encode round-trip verified (0.00s)"},{"status":"passed","name":"crypt.decrypt","message":"crypt.decrypt verified with key integrity check (0.03s)"},{"status":"passed","name":"crypt.encrypt","message":"crypt.encrypt/decrypt round-trip verified (0.01s)"},{"status":"passed","name":"crypt.generatebytes","message":"crypt.generatebytes verified for multiple sizes (0.04s)"},{"status":"passed","name":"crypt.generatekey","message":"crypt.generatekey produces valid 256-bit keys (0.02s)"},{"status":"passed","name":"crypt.hash","message":"crypt.hash verified for sha1/sha256/sha384/sha512/md5 (0.00s)"},{"status":"passed","name":"debug.getconstant","message":"debug.getconstant retrieved 'print' correctly (0.00s)"},{"status":"passed","name":"debug.getconstants","message":"debug.getconstants returned 4 constants (0.00s)"},{"status":"passed","name":"debug.getproto","message":"debug.getproto found 1 proto(s) (0.00s)"},{"status":"passed","name":"debug.getprotos","message":"debug.getprotos found 2 protos (0.00s)"},{"status":"passed","name":"debug.getstack","message":"debug.getstack captured 3 values (0.00s)"},{"status":"passed","name":"debug.getupvalue","message":"debug.getupvalue correctly retrieved both upvalues (0.00s)"},{"status":"passed","name":"debug.getupvalues","message":"debug.getupvalues retrieved all 3 upvalues correctly (0.00s)"},{"status":"passed","name":"debug.setconstant","message":"debug.setconstant modified and restored constant (0.00s)"},{"status":"passed","name":"debug.setstack","message":"debug.setstack modified local variable on stack (0.00s)"},{"status":"passed","name":"decompile","message":"decompile returned 55 chars of source (0.00s)"},{"status":"passed","name":"delfile","message":"delfile removes file correctly (0.00s)"},{"status":"passed","name":"delfolder","message":"delfolder removes folder and contents (0.00s)"},{"status":"passed","name":"filtergc","message":"filtergc found sentinel table and returned 2376 functions (0.00s)"},{"status":"passed","name":"fireclickdetector","message":"fireclickdetector successfully triggered MouseClick (0.11s)"},{"status":"passed","name":"firesignal","message":"firesignal triggered connection with correct argument (0.10s)"},{"status":"passed","name":"getcallbackvalue","message":"getcallbackvalue retrieved correct callback reference (0.00s)"},{"status":"passed","name":"getcallingscript","message":"getcallingscript returned: nil (0.00s)"},{"status":"passed","name":"getconnections","message":"getconnections found 3 connections with valid fields (0.00s)"},{"status":"passed","name":"getcustomasset","message":"getcustomasset returned valid rbxasset URL (0.00s)"},{"status":"passed","name":"getgc","message":"getgc returned 16727 objects including functions and tables (0.00s)"},{"status":"passed","name":"getgenv","message":"getgenv correctly exposes and clears global environment variables (0.00s)"},{"status":"passed","name":"gethiddenproperty","message":"gethiddenproperty returned correct value and hidden flag (0.00s)"},{"status":"passed","name":"gethui","message":"gethui returned: ScreenGui (0.00s)"},{"status":"passed","name":"getinstances","message":"getinstances returned 492 instances (0.00s)"},{"status":"passed","name":"getloadedmodules","message":"getloadedmodules returned 57 loaded modules (0.00s)"},{"status":"passed","name":"getnamecallmethod","message":"getnamecallmethod captured correct method name (0.00s)"},{"status":"passed","name":"getnilinstances","message":"getnilinstances returned 88 nil-parented instances (0.00s)"},{"status":"passed","name":"getrawmetatable","message":"getrawmetatable returned correct metatable reference (0.00s)"},{"status":"passed","name":"getrenderproperty","message":"getrenderproperty read Visible, Text and Size correctly (0.00s)"},{"status":"passed","name":"getrenv","message":"getrenv returned Roblox environment distinct from executor env (0.00s)"},{"status":"passed","name":"getrunningscripts","message":"getrunningscripts returned 13 scripts (0.00s)"},{"status":"passed","name":"getscriptbytecode","message":"getscriptbytecode returned 11908 bytes of bytecode (0.00s)"},{"status":"passed","name":"getscriptclosure","message":"getscriptclosure returned a valid closure for RbxCharacterSounds (0.00s)"},{"status":"passed","name":"getscripts","message":"getscripts returned 64 scripts (0.00s)"},{"status":"passed","name":"getsenv","message":"getsenv returned environment with correct script reference (0.00s)"},{"status":"passed","name":"getthreadidentity","message":"Thread identity: 8 (0.00s)"},{"status":"passed","name":"hookfunction","message":"hookfunction lifecycle validated (0.00s)"},{"status":"passed","name":"hookmetamethod","message":"hookmetamethod lifecycle verified for __index (0.00s)"},{"status":"passed","name":"identifyexecutor","message":"Executor: Potassium v2.3.1 (0.00s)"},{"status":"passed","name":"iscclosure","message":"iscclosure correctly identifies closure types (0.00s)"},{"status":"passed","name":"isexecutorclosure","message":"isexecutorclosure correctly scopes closures (0.00s)"},{"status":"passed","name":"isfile","message":"isfile correctly identifies files vs directories vs missing (0.00s)"},{"status":"passed","name":"isfolder","message":"isfolder correctly identifies folders (0.00s)"},{"status":"passed","name":"islclosure","message":"islclosure correctly identifies Lua closures (0.00s)"},{"status":"passed","name":"isrbxactive","message":"isrbxactive: false (0.00s)"},{"status":"passed","name":"isreadonly","message":"isreadonly correctly identifies table read state (0.00s)"},{"status":"passed","name":"isrenderobj","message":"isrenderobj correctly identifies Drawing objects (0.00s)"},{"status":"passed","name":"isscriptable","message":"isscriptable correctly identifies scriptable vs hidden properties (0.00s)"},{"status":"passed","name":"listfiles","message":"listfiles returned 3 files correctly (0.00s)"},{"status":"passed","name":"loadfile","message":"loadfile handles valid and invalid Lua files (0.00s)"},{"status":"passed","name":"loadstring","message":"loadstring handles valid and invalid input correctly (0.00s)"},{"status":"passed","name":"lz4compress","message":"lz4compress: 460 → 35 bytes (0.00s)"},{"status":"passed","name":"lz4decompress","message":"lz4decompress recovered original data correctly (0.00s)"},{"status":"passed","name":"makefolder","message":"makefolder creates folders and supports nesting (0.00s)"},{"status":"passed","name":"messagebox","message":"messagebox is available (0.00s)"},{"status":"passed","name":"mouse1click","message":"mouse1click is available (0.00s)"},{"status":"passed","name":"mouse1press","message":"mouse1press is available (0.00s)"},{"status":"passed","name":"mouse1release","message":"mouse1release is available (0.00s)"},{"status":"passed","name":"mouse2click","message":"mouse2click is available (0.00s)"},{"status":"passed","name":"mouse2press","message":"mouse2press is available (0.00s)"},{"status":"passed","name":"mouse2release","message":"mouse2release is available (0.00s)"},{"status":"passed","name":"mousemoveabs","message":"mousemoveabs is available (0.00s)"},{"status":"passed","name":"mousemoverel","message":"mousemoverel is available (0.00s)"},{"status":"passed","name":"mousescroll","message":"mousescroll is available (0.00s)"},{"status":"passed","name":"newcclosure","message":"newcclosure wraps Lua function as C closure (0.00s)"},{"status":"passed","name":"queue_on_teleport","message":"queue_on_teleport is available (0.00s)"},{"status":"passed","name":"rconsoleclear","message":"rconsoleclear is available (0.00s)"},{"status":"passed","name":"rconsolecreate","message":"rconsolecreate is available (0.00s)"},{"status":"passed","name":"rconsoledestroy","message":"rconsoledestroy is available (0.00s)"},{"status":"passed","name":"rconsoleinput","message":"rconsoleinput is available (0.00s)"},{"status":"passed","name":"rconsoleprint","message":"rconsoleprint is available (0.00s)"},{"status":"passed","name":"rconsolesettitle","message":"rconsolesettitle is available (0.00s)"},{"status":"passed","name":"readfile","message":"readfile correctly reads written content (0.00s)"},{"status":"passed","name":"request","message":"request returned valid 200 JSON response (0.32s)"},{"status":"passed","name":"setclipboard","message":"setclipboard accepted input (0.00s)"},{"status":"passed","name":"setfpscap","message":"setfpscap accepted 30/60/0/60 without error (0.00s)"},{"status":"passed","name":"sethiddenproperty","message":"sethiddenproperty set and verified size_xml = 15 (0.00s)"},{"status":"passed","name":"setrawmetatable","message":"setrawmetatable replaced metatable correctly (0.00s)"},{"status":"passed","name":"setrbxclipboard","message":"setrbxclipboard is available (0.00s)"},{"status":"passed","name":"setreadonly","message":"setreadonly toggled read state and verified mutation (0.00s)"},{"status":"passed","name":"setrenderproperty","message":"setrenderproperty correctly set Visible and Thickness (0.00s)"},{"status":"passed","name":"setscriptable","message":"setscriptable toggled and restored size_xml scriptability (0.00s)"},{"status":"passed","name":"setthreadidentity","message":"setthreadidentity set to 3 and restored to 8 (0.00s)"},{"status":"passed","name":"writefile","message":"writefile creates file with correct content (0.00s)"},{"status":"failed","name":"WebSocket.connect","message":":1582: Connection must have OnMessage event"},{"status":"failed","name":"debug.getinfo","message":":848: nparams must be 2, got nil"},{"status":"failed","name":"debug.setupvalue","message":":953: setupvalue did not update upvalue"},{"status":"failed","name":"dofile","message":":1071: dofile must return script result, got: nil"},{"status":"failed","name":"getscripthash","message":":1436: getscripthash must return non-empty string"},{"status":"failed","name":"replicatesignal","message":":1654: invalid argument #2 to replicatesignal (expected Tuple, got function)"}];
+const grid = document.getElementById('results');
+tests.forEach((t, i) => {
+  const icons = {passed:'✅',failed:'❌',warning:'⚠️'};
+  const d = document.createElement('div');
+  d.className = 'card ' + t.status;
+  d.style.animationDelay = (i * 0.03) + 's';
+  d.innerHTML = '<div class="card-top"><span class="card-icon">' + (icons[t.status]||'❓') + '</span><span class="card-name">' + t.name + '</span></div><div class="card-msg">' + t.message + '</div>';
+  grid.appendChild(d);
+});
+</script>
+</body>
+</html>
