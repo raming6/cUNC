@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cUNC Test Results</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInLeft 0.8s ease-out;
+        }
+        
+        .sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInRight 0.8s ease-out;
+        }
+        
+        .test-item {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .test-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .test-item:hover::before {
+            left: 100%;
+        }
+        
+        .test-item:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .passed {
+            border-left-color: #10b981;
+        }
+        
+        .failed {
+            border-left-color: #ef4444;
+        }
+        
+        .warning {
+            border-left-color: #f59e0b;
+        }
+        
+        .status-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+        
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+        
+        .circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 8;
+        }
+        
+        .circle {
+            fill: none;
+            stroke: #10b981;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-dasharray: 88.181818, 100;
+            transition: stroke-dasharray 1.5s ease-in-out;
+        }
+        
+        .percentage-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .info-item {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .info-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .function-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            max-width: 300px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="header">
+                <h1>cUNC Test Results</h1>
+                <p>Made by cactus</p>
+            </div>
+            
+            <div id="testResults">
+                <!-- Test results populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="progress-circle">
+                <svg viewBox="0 0 36 36">
+                    <path class="circle-bg"
+                        d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path class="circle"
+                        d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                </svg>
+                <div class="percentage-text">88.2%</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Passed</div>
+                <div class="info-value">97 / 110</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Executor</div>
+                <div class="info-value">Potassium</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Executor Version</div>
+                <div class="info-value">2.3.1</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Roblox User</div>
+                <div class="info-value">Wg4_0 (11197239079)</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Test Duration</div>
+                <div class="info-value">16.76s</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">cUNC Version</div>
+                <div class="info-value">1.0.0</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Test ID</div>
+                <div class="info-value">6a582098150f9</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Timestamp</div>
+                <div class="info-value">2026-07-15 19:06:48</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="tooltip" class="function-tooltip"></div>
+
+    <script>
+        const testData = {"test_id":"6a582098150f9","cunc_version":"1.0.0","roblox_user":"Wg4_0","tests":[{"status":"passed","description":"No description available","name":"debug.getproto","message":"Proto function analysis completed (0.60s)"},{"status":"passed","description":"No description available","name":"lz4compress","message":"LZ4 compression functionality verified (0.53s)"},{"status":"passed","description":"No description available","name":"mouse1click","message":"Mouse click function available (0.53s)"},{"status":"passed","description":"No description available","name":"islclosure","message":"Lua closure verification passed (0.52s)"},{"status":"passed","description":"No description available","name":"mousemoveabs","message":"Absolute mouse movement function available (0.53s)"},{"status":"passed","description":"No description available","name":"getcallbackvalue","message":"Callback value extraction verified (0.53s)"},{"status":"passed","description":"No description available","name":"mouse2press","message":"Right press function available (0.53s)"},{"status":"passed","description":"No description available","name":"isfolder","message":"Folder existence checking verified (0.52s)"},{"status":"passed","description":"No description available","name":"isrenderobj","message":"Render object detection verified (0.55s)"},{"status":"passed","description":"No description available","name":"listfiles","message":"Directory listing functionality verified (0.51s)"},{"status":"passed","description":"No description available","name":"cache.iscached","message":"Multi-layer cache verification (1.10s)"},{"status":"passed","description":"No description available","name":"clonefunction","message":"Function cloning integrity verified (0.52s)"},{"status":"passed","description":"No description available","name":"identifyexecutor","message":"Environment: Potassium v2.3.1 (0.53s)"},{"status":"passed","description":"No description available","name":"mousemoverel","message":"Relative mouse movement function available (0.53s)"},{"status":"passed","description":"No description available","name":"hookmetamethod","message":"Metamethod hooking lifecycle validated (0.53s)"},{"status":"passed","description":"No description available","name":"crypt.generatekey","message":"Cryptographic key generation validated (0.61s)"},{"status":"passed","description":"No description available","name":"getrunningscripts","message":"Running scripts detection: 13 found (0.55s)"},{"status":"passed","description":"No description available","name":"getscriptbytecode","message":"Script bytecode extraction successful (0.55s)"},{"status":"passed","description":"No description available","name":"cache.replace","message":"Object replacement validated (0.55s)"},{"status":"passed","description":"No description available","name":"debug.setconstant","message":"Runtime constant modification successful (0.60s)"},{"status":"passed","description":"No description available","name":"Drawing","message":"Drawing library available (0.55s)"},{"status":"passed","description":"No description available","name":"gethiddenproperty","message":"Hidden property extraction successful (0.53s)"},{"status":"passed","description":"No description available","name":"crypt.encrypt","message":"Cryptographic encryption validated (0.56s)"},{"status":"passed","description":"No description available","name":"lz4decompress","message":"LZ4 decompression functionality verified (0.53s)"},{"status":"passed","description":"No description available","name":"debug.getconstants","message":"Constants table extraction verified (0.61s)"},{"status":"passed","description":"No description available","name":"getconnections","message":"Event connections analysis successful (0.53s)"},{"status":"passed","description":"No description available","name":"setrbxclipboard","message":"Clipboard function available (0.53s)"},{"status":"passed","description":"No description available","name":"getscripts","message":"Script enumeration: 64 found (0.55s)"},{"status":"passed","description":"No description available","name":"rconsolecreate","message":"Console create function available (0.52s)"},{"status":"passed","description":"No description available","name":"setclipboard","message":"Clipboard function available (0.54s)"},{"status":"passed","description":"No description available","name":"rconsoleinput","message":"Console input function available (0.52s)"},{"status":"passed","description":"No description available","name":"readfile","message":"File reading integrity verified (0.50s)"},{"status":"passed","description":"No description available","name":"fireclickdetector","message":"Click detector firing validated (0.63s)"},{"status":"passed","description":"No description available","name":"messagebox","message":"Messagebox function available (0.54s)"},{"status":"passed","description":"No description available","name":"mouse2click","message":"Right click function available (0.53s)"},{"status":"passed","description":"No description available","name":"isreadonly","message":"Readonly table detection verified (0.53s)"},{"status":"passed","description":"No description available","name":"writefile","message":"File write operations validated (0.51s)"},{"status":"passed","description":"No description available","name":"sethiddenproperty","message":"Hidden property manipulation verified (0.53s)"},{"status":"passed","description":"No description available","name":"appendfile","message":"File append operations validated (0.51s)"},{"status":"passed","description":"No description available","name":"cache.invalidate","message":"Deep cache validation passed (0.55s)"},{"status":"passed","description":"No description available","name":"delfolder","message":"Folder deletion operations validated (0.52s)"},{"status":"passed","description":"No description available","name":"getnilinstances","message":"Nil instance detection: 51 found (0.53s)"},{"status":"passed","description":"No description available","name":"getcallingscript","message":"Calling script context captured (0.52s)"},{"status":"passed","description":"No description available","name":"mouse2release","message":"Right release function available (0.53s)"},{"status":"passed","description":"No description available","name":"isfile","message":"File existence checking verified (0.52s)"},{"status":"passed","description":"No description available","name":"rconsoleclear","message":"Console clear function available (0.52s)"},{"status":"passed","description":"No description available","name":"iscclosure","message":"Closure type analysis complete (0.52s)"},{"status":"passed","description":"No description available","name":"setfpscap","message":"FPS cap manipulation verified (0.54s)"},{"status":"passed","description":"No description available","name":"getrenv","message":"Roblox environment isolation verified (0.55s)"},{"status":"passed","description":"No description available","name":"Drawing.Fonts","message":"Drawing font enumeration verified (0.60s)"},{"status":"passed","description":"No description available","name":"debug.getconstant","message":"Constant extraction validated (0.61s)"},{"status":"passed","description":"No description available","name":"debug.getupvalue","message":"Upvalue extraction validated (0.60s)"},{"status":"passed","description":"No description available","name":"isrbxactive","message":"Game active status monitoring: false (0.53s)"},{"status":"passed","description":"No description available","name":"getgenv","message":"Global environment manipulation verified (0.54s)"},{"status":"passed","description":"No description available","name":"getinstances","message":"Instance enumeration successful: 543 found (0.53s)"},{"status":"passed","description":"No description available","name":"getloadedmodules","message":"Loaded modules enumeration: 57 found (0.55s)"},{"status":"passed","description":"No description available","name":"crypt.hash","message":"Multiple hashing algorithms verified (1.20s)"},{"status":"passed","description":"No description available","name":"WebSocket","message":"WebSocket library available (0.55s)"},{"status":"passed","description":"No description available","name":"setrenderproperty","message":"Render property manipulation verified (0.55s)"},{"status":"passed","description":"No description available","name":"mouse1press","message":"Mouse press function available (0.53s)"},{"status":"passed","description":"No description available","name":"WebSocket.connect","message":"WebSocket connection lifecycle validated (0.60s)"},{"status":"passed","description":"No description available","name":"crypt.decrypt","message":"Cryptographic decryption validated (0.59s)"},{"status":"passed","description":"No description available","name":"delfile","message":"File deletion operations validated (0.52s)"},{"status":"passed","description":"No description available","name":"newcclosure","message":"C closure creation validated (0.52s)"},{"status":"passed","description":"No description available","name":"request","message":"HTTP request functionality verified (0.84s)"},{"status":"passed","description":"No description available","name":"getrawmetatable","message":"Raw metatable access verified (0.53s)"},{"status":"passed","description":"No description available","name":"queue_on_teleport","message":"Teleport queue function available (0.54s)"},{"status":"passed","description":"No description available","name":"setrawmetatable","message":"Raw metatable manipulation verified (0.53s)"},{"status":"passed","description":"No description available","name":"getsenv","message":"Script environment extraction successful (0.55s)"},{"status":"passed","description":"No description available","name":"makefolder","message":"Directory creation operations verified (0.51s)"},{"status":"passed","description":"No description available","name":"rconsoleprint","message":"Console print function available (0.52s)"},{"status":"passed","description":"No description available","name":"checkcaller","message":"Caller context analysis complete (0.52s)"},{"status":"passed","description":"No description available","name":"rconsoledestroy","message":"Console destroy function available (0.52s)"},{"status":"passed","description":"No description available","name":"isscriptable","message":"Property scriptability detection verified (0.53s)"},{"status":"passed","description":"No description available","name":"setreadonly","message":"Readonly state manipulation verified (0.53s)"},{"status":"passed","description":"No description available","name":"rconsolesettitle","message":"Console title function available (0.52s)"},{"status":"passed","description":"No description available","name":"getrenderproperty","message":"Render property extraction verified (0.55s)"},{"status":"passed","description":"No description available","name":"compareinstances","message":"Instance comparison logic validated (0.52s)"},{"status":"passed","description":"No description available","name":"gethui","message":"HUI access verified (0.53s)"},{"status":"passed","description":"No description available","name":"getcustomasset","message":"Custom asset path generation verified (0.53s)"},{"status":"passed","description":"No description available","name":"mousescroll","message":"Mouse scroll function available (0.53s)"},{"status":"passed","description":"No description available","name":"mouse1release","message":"Mouse release function available (0.53s)"},{"status":"passed","description":"No description available","name":"crypt.base64decode","message":"Base64 decoding integrity verified (0.55s)"},{"status":"passed","description":"No description available","name":"loadstring","message":"Loadstring functionality verified (0.52s)"},{"status":"passed","description":"No description available","name":"getnamecallmethod","message":"Namecall method extraction verified (0.53s)"},{"status":"passed","description":"No description available","name":"hookfunction","message":"Function hooking lifecycle validated (0.52s)"},{"status":"passed","description":"No description available","name":"isexecutorclosure","message":"Executor closure identification validated (0.52s)"},{"status":"passed","description":"No description available","name":"setthreadidentity","message":"Thread identity manipulation verified (0.55s)"},{"status":"passed","description":"No description available","name":"getthreadidentity","message":"Thread identity context: 8 (0.55s)"},{"status":"passed","description":"No description available","name":"cleardrawcache","message":"Draw cache clearing function available (0.55s)"},{"status":"passed","description":"No description available","name":"crypt.base64encode","message":"Base64 encoding integrity verified (0.55s)"},{"status":"passed","description":"No description available","name":"loadfile","message":"File loading functionality verified (0.53s)"},{"status":"passed","description":"No description available","name":"cloneref","message":"Reference cloning integrity verified (0.52s)"},{"status":"passed","description":"No description available","name":"crypt.generatebytes","message":"Random bytes generation verified (1.10s)"},{"status":"passed","description":"No description available","name":"setscriptable","message":"Property scriptability manipulation verified (0.53s)"},{"status":"passed","description":"No description available","name":"debug.setstack","message":"Stack frame manipulation verified (0.60s)"},{"status":"passed","description":"No description available","name":"debug.getupvalues","message":"Multiple upvalues extraction verified (0.60s)"},{"status":"failed","description":"No description available","name":"Drawing.new","message":":2087: Drawing object creation failed"},{"status":"failed","description":"No description available","name":"dofile","message":":1578: Dofile execution failed"},{"status":"failed","description":"No description available","name":"debug.getprotos","message":":1354: Insufficient proto depth"},{"status":"failed","description":"No description available","name":"firesignal","message":"OnInvoke is a callback member of BindableFunction; you can only set the callback value, get is not available"},{"status":"failed","description":"No description available","name":"filtergc","message":":2285: invalid argument #2 to 'filtergc' (table expected, got function)"},{"status":"failed","description":"No description available","name":"debug.getinfo","message":":1314: Parameter count incorrect"},{"status":"failed","description":"No description available","name":"getscriptclosure","message":"Constants is not a valid member of Folder \"CoreGui.RobloxGui.Modules.Common\""},{"status":"failed","description":"No description available","name":"decompile","message":":2185: Decompiled code should contain function structure"},{"status":"failed","description":"No description available","name":"replicatesignal","message":":2353: Argument 2 expected"},{"status":"failed","description":"No description available","name":"getscripthash","message":":2027: Script hash unchanged after modification"},{"status":"failed","description":"No description available","name":"getgc","message":":1960: Missing common GC types"},{"status":"failed","description":"No description available","name":"debug.setupvalue","message":":1444: Upvalue modification failed"},{"status":"failed","description":"No description available","name":"debug.getstack","message":":1367: Stack value extraction failed"}],"total_time":16.76016690000006,"passes":97,"roblox_userid":"11197239079","executor":"Potassium","executor_version":"2.3.1","timestamp":"2026-07-15 19:06:48","fails":13,"undefined":0};
+        
+        function populateTestResults() {
+            const container = document.getElementById('testResults');
+            
+            testData.tests.forEach(test => {
+                const testElement = document.createElement('div');
+                testElement.className = `test-item ${test.status}`;
+                testElement.setAttribute('data-description', test.description || 'No description available');
+                
+                let icon = '❓';
+                if (test.status === 'passed') icon = '✅';
+                else if (test.status === 'failed') icon = '⛔';
+                else if (test.status === 'warning') icon = '⚠️';
+                
+                testElement.innerHTML = `
+                    <div class="status-icon">${icon}</div>
+                    <strong>${test.name}</strong>
+                    <div style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.9;">
+                        ${test.message}
+                    </div>
+                `;
+                
+                container.appendChild(testElement);
+            });
+        }
+        
+        const tooltip = document.getElementById('tooltip');
+        document.addEventListener('mouseover', (e) => {
+            if (e.target.closest('.test-item')) {
+                const item = e.target.closest('.test-item');
+                const rect = item.getBoundingClientRect();
+                tooltip.textContent = item.getAttribute('data-description');
+                tooltip.style.left = (rect.right + 10) + 'px';
+                tooltip.style.top = (rect.top + window.scrollY) + 'px';
+                tooltip.style.opacity = '1';
+            }
+        });
+        
+        document.addEventListener('mouseout', () => {
+            tooltip.style.opacity = '0';
+        });
+        
+        document.addEventListener('DOMContentLoaded', populateTestResults);
+    </script>
+</body>
+</html>
+    
